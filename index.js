@@ -31,8 +31,8 @@ async function get_file(access_token) {
         let response = await fetch(url, {
             method: 'GET',
             headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer {}'.format(access_token)
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${access_token}`
             }
         });
         let data = await response.json();
