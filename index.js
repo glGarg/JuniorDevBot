@@ -7,7 +7,7 @@ try {
   const issue_title = core.getInput('issue-title');
   const issue_body = core.getInput('issue-body');
   const issue_number = core.getInput('issue-number');
-  const repo_token = code.getInput('repo-token');
+  const repo_token = core.getInput('repo-token');
 
   get_file(repo_token);
 
