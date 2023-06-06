@@ -12,7 +12,9 @@
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1",
+    "@octokit/rest": "^19.0.11",
     "js-base64": "^3.7.5",
-    "node-fetch": "^2.6.11"
+    "node-fetch": "^2.6.11",
+    "octokit-plugin-create-pull-request": "^5.0.0"
   }
 }
