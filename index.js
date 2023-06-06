@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
+var base64 = require('js-base64').Base64;
 
 try {
   // `who-to-greet` input defined in action metadata file
@@ -32,11 +33,12 @@ async function get_file(access_token) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${access_token}`
+                'Authorization': `token ${access_token}`
             }
         });
         let data = await response.json();
         console.log(data);
+        console.log(base64.decode(data.content))
         return data;
     }
     catch (error) {
