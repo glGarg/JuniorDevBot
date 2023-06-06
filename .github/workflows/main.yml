@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -20,6 +22,7 @@ jobs:
           issue-title: ${{ github.event.issue.title }}
           issue-body: ${{ github.event.issue.body }}
           issue-number: ${{ github.event.issue.number }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             This issue is available for anyone to work on. **Make sure to reference this issue in your pull request.** :sparkles: Thank you for your contribution! :sparkles:
       # Use the output from the `hello` step
