@@ -36,9 +36,8 @@ async function get_file(access_token, repo_url, buggy_file_path) {
             }
         });
         let data = await response.json();
-        console.log(data);
-        console.log(base64.decode(data.content))
-        return data;
+        let file = base64.decode(data.content);
+        return file;
     }
     catch (error) {
         core.setFailed(error.message);
