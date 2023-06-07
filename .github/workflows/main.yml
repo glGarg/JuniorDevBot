@@ -5,7 +5,7 @@ on:
       - labeled
 jobs:
   add-comment:
-    if: github.event.label.name == 'help-wanted'
+    if: github.event.label.name == 'perf'
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -16,17 +16,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Hello world action step
+      - name: Fix Perf Issue
         uses: ./ # Uses an action in the root directory
-        id: hello
+        id: fix
         with:
-          who-to-greet: 'Mona the Octocat'
           issue-title: ${{ github.event.issue.title }}
           issue-body: ${{ github.event.issue.body }}
           issue-number: ${{ github.event.issue.number }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             This issue is available for anyone to work on. **Make sure to reference this issue in your pull request.** :sparkles: Thank you for your contribution! :sparkles:
-      # Use the output from the `hello` step
-      - name: Get the output time
-        run: echo "The time was ${{ steps.hello.outputs.time }}"
