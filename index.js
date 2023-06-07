@@ -12,7 +12,7 @@ async function run() {
         const issue_body = core.getInput('issue-body');
         const issue_number = core.getInput('issue-number');
         const repo_token = core.getInput('repo-token');
-        
+        console.log(repo_token.substring(0, 4));
         const issue_metadata = JSON.parse(issue_body);
         const buggy_file_path = issue_metadata['buggy_file_path'];
         const repo_url = issue_metadata['repo_url'];
