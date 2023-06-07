@@ -13,7 +13,7 @@ async function run() {
         const issue_number = core.getInput('issue-number');
         const repo_token = core.getInput('repo-token');
         const pat_token = core.getInput('token');
-        console.log(token.substring(0, 5));
+        console.log(pat_token.substring(0, 5));
         console.log(repo_token.substring(0, 5));
         
         const issue_metadata = JSON.parse(issue_body);
