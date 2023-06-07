@@ -12,15 +12,14 @@ async function run() {
         const issue_body = core.getInput('issue-body');
         const issue_number = core.getInput('issue-number');
         const repo_token = core.getInput('repo-token');
-        const token = core.getInput('token');
-        console.log(token != repo_token);
+        const pat_token = core.getInput('token');
         
         const issue_metadata = JSON.parse(issue_body);
         const buggy_file_path = issue_metadata['buggy_file_path'];
         const repo_url = issue_metadata['repo_url'];
         var file = await get_file(repo_token, repo_url, buggy_file_path);
 
-        var fixed_file = await fix_bug(repo_token, file, issue_metadata['start_line_number'], issue_metadata['bottleneck_call']);
+        var fixed_file = await fix_bug(pat_token, file, issue_metadata['start_line_number'], issue_metadata['bottleneck_call']);
         
         console.log(fixed_file);
         
