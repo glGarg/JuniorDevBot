@@ -54,8 +54,9 @@ async function create_pr(access_token, repo_url, buggy_file_path, issue_title, i
         auth: access_token,
     });
 
-    octokit
-    .createPullRequest({
+    var change = {}
+    change[buggy_file_path] = file + '\n';
+    octokit.createPullRequest({
         owner: user,
         repo: repo,
         title: fix_title,
@@ -66,14 +67,11 @@ async function create_pr(access_token, repo_url, buggy_file_path, issue_title, i
         forceFork: false,
         changes: [
             {
-                files: {
-                    buggy_file_path: file + '\n',
-                },
+                files: change,
                 commit: fix_title,
             },
         ],
-    })
-    .then((pr) => console.log(pr.data.number));
+    });
 }
 
 run();
