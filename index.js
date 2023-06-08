@@ -8,22 +8,37 @@ const MyOctokit = Octokit.plugin(createPullRequest);
 
 async function run() {
     try {
-        const issue_title = core.getInput('issue-title');
-        const issue_body = core.getInput('issue-body');
-        const issue_number = core.getInput('issue-number');
         const repo_token = core.getInput('repo-token');
         const pat_token = core.getInput('token');
+        const comment = core.getInput('comment', { required: false });
+        if (comment) {
+            const all_comments = core.getInput('all-comments');
+            const pr_number = core.getInput('pr-number');
+            const repo = core.getInput('repo');
+            console.log(all_comments);
+            console.log('----');
+            console.log(pr_number);
+            console.log('----');
+            console.log(repo);
+            console.log('----');
+            console.log(comment);
+            console.log('----');
+        } else {
+            const issue_title = core.getInput('issue-title');
+            const issue_body = core.getInput('issue-body');
+            const issue_number = core.getInput('issue-number');
 
-        const issue_metadata = JSON.parse(issue_body);
-        const buggy_file_path = issue_metadata['buggy_file_path'];
-        const repo_url = issue_metadata['repo_url'];
-        var file = await get_file(repo_token, repo_url, buggy_file_path);
+            const issue_metadata = JSON.parse(issue_body);
+            const buggy_file_path = issue_metadata['buggy_file_path'];
+            const repo_url = issue_metadata['repo_url'];
+            var file = await get_file(repo_token, repo_url, buggy_file_path);
 
-        var fixed_file = await fix_bug(pat_token, file, issue_metadata['start_line_number'], issue_metadata['bottleneck_call']);
-        
-        console.log(fixed_file);
-        
-        create_pr(repo_token, repo_url, buggy_file_path, issue_title, issue_number, file, fixed_file);
+            var fixed_file = await fix_bug(pat_token, file, issue_metadata['start_line_number'], issue_metadata['bottleneck_call']);
+            
+            console.log(fixed_file);
+            
+            create_pr(repo_token, repo_url, buggy_file_path, issue_title, issue_number, file, fixed_file);
+        }
     } catch (error) {
         core.setFailed(error.message);
     }

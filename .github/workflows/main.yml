@@ -31,8 +31,32 @@ jobs:
             This issue is available for anyone to work on. **Make sure to reference this issue in your pull request.** :sparkles: Thank you for your contribution! :sparkles:
   respond:
     runs-on: ubuntu-latest
-    if: github.event.issue.pull_request && contains(github.event.comment.body, '/devbot')
+    if: github.event_name == 'pull_request' && contains(github.event.comment.body, '/devbot')
+    env:
+      REPO_URL: https://github.com/glGarg/JuniorDevBot
     steps:
-      - name: Respond
-        run: |
-          echo "Hello"
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get comments
+        id: get-comments
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const { data: comments } = await github.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            console.log(comments);
+            return { comments };
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Respond To Comment
+        uses: ./
+        id: respond
+        with:
+          repo: ${{ github.event.repository.full_name }}
+          pr-number: ${{ github.event.pull_request.number }}
+          comment: ${{ github.event.comment.body }}
+          all-comments: ${{ steps.get-comments.outputs.comments }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
