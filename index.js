@@ -33,23 +33,22 @@ async function run() {
             const repo_url = issue_metadata['repo_url'];
             var file = await get_file(repo_token, repo_url, buggy_file_path);
 
-            var fixed_file = await fix_bug(pat_token, file, issue_metadata['start_line_number'], issue_metadata['bottleneck_call']);
+            var auth = await get_deepprompt_auth(pat_token);
+            var auth_token = auth['access_token'];
+            var session_id = auth['session_id'];
+            var fixed_file = await fix_bug(auth_token, session_id, file, issue_metadata['start_line_number'], issue_metadata['bottleneck_call']);
             
             console.log(fixed_file);
             
-            create_pr(repo_token, repo_url, buggy_file_path, issue_title, issue_number, file, fixed_file);
+            create_pr(repo_token, repo_url, buggy_file_path, issue_title, issue_number, file, fixed_file, session_id);
         }
     } catch (error) {
         core.setFailed(error.message);
     }
 }
 
-async function fix_bug(access_token, buggy_code, start_line_number, buggy_function_call)
+async function fix_bug(auth_token, session_id, buggy_code, start_line_number, buggy_function_call)
 {
-    var auth = await get_deepprompt_auth(access_token);
-    var auth_token = auth['access_token'];
-    var session_id = auth['session_id'];
-
     var url = 'https://data-ai-dev.microsoft.com/deeppromptdev/api/v1/query';
     var intent = 'perf_fix';
     let response = await fetch(url, {
@@ -150,7 +149,7 @@ function find_end_of_function(code, start_line_number) {
     return i;
 }
 
-async function create_pr(access_token, repo_url, buggy_file_path, issue_title, issue_number, file, fixed_file) {
+async function create_pr(access_token, repo_url, buggy_file_path, issue_title, issue_number, file, fixed_file, session_id) {
     const user = repo_url.split('/')[3];
     const repo = repo_url.split('/')[4];
     const fix_title = `PERF: Fix ${issue_title}`;
@@ -166,7 +165,7 @@ async function create_pr(access_token, repo_url, buggy_file_path, issue_title, i
         owner: user,
         repo: repo,
         title: fix_title,
-        body: `Auto-generated PR fixing issue #${issue_number}.`,
+        body: `Auto-generated PR fixing issue #${issue_number}. Session ID: ${session_id}.`,
         head: branch_name,
         base: 'main',
         update: false,
