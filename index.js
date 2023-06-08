@@ -63,6 +63,8 @@ async function post_comment(access_token, repo_url, pr_number, comment)
             'body': comment
         })
     });
+    let data = await response.json();
+    console.log(data);
 }
 
 async function get_response(auth_token, session_id, query)
