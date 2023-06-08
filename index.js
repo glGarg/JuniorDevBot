@@ -24,7 +24,7 @@ async function run() {
             const session_id = pr_body.split('Session ID: ')[1].split('.')[0];
 
             const query = comment.split('/devbot ')[1];
-            const response = get_response(auth_token, session_id, query);
+            const response = await get_response(auth_token, session_id, query);
             post_comment(repo_token, repo_url, pr_number, response);
         } else {
             const issue_title = core.getInput('issue-title');
