@@ -23,7 +23,7 @@ async function run() {
         
         console.log(fixed_file);
         
-        create_pr(repo_token, repo_url, buggy_file_path, issue_title, issue_number, file);
+        create_pr(repo_token, repo_url, buggy_file_path, issue_title, issue_number, file, fixed_file);
     } catch (error) {
         core.setFailed(error.message);
     }
@@ -52,12 +52,22 @@ async function fix_bug(access_token, buggy_code, start_line_number, buggy_functi
             'context': {
                 'source_code': buggy_code,
                 'buggy_function_call': buggy_function_call,
-                'start_line_number': start_line_number.toString()
+                'start_line_number': start_line_number.toString(),
+                'prompt_strategy': 'instructive'
             }
         })
     });
     let data = await response.json();
-    console.log(data);
+    let fix = data['response_text'].slice(0, -3).split('```csharp\n\n')[1];
+
+    let end_line_number = find_end_of_function(buggy_code, start_line_number);
+    var lines = buggy_code.split('\n');
+    var fixed_lines = lines.slice(0, start_line_number - 1).concat(fix.split('\n')).concat(lines.slice(end_line_number + 1));
+    fix = fixed_lines.join('\n');
+
+    console.log("---------------");
+    console.log(fix);
+    return fix;
 }
 
 async function get_deepprompt_auth(access_token) {
@@ -103,7 +113,29 @@ async function get_file(access_token, repo_url, buggy_file_path) {
     }
 }
 
-async function create_pr(access_token, repo_url, buggy_file_path, issue_title, issue_number, file) {
+function find_end_of_function(code, start_line_number) {
+    var lines = code.split('\n');
+    var i = start_line_number;
+    var open_braces = 0;
+    while (i < lines.length) {
+        var line = lines[i];
+        for (var j = 0; j < line.length; j++) {
+            if (line[j] == '{') {
+                open_braces++;
+            }
+            else if (line[j] == '}') {
+                open_braces--;
+            }
+        }
+        if (open_braces == 0) {
+            return i;
+        }
+        i++;
+    }
+    return i;
+}
+
+async function create_pr(access_token, repo_url, buggy_file_path, issue_title, issue_number, file, fixed_file) {
     const user = repo_url.split('/')[3];
     const repo = repo_url.split('/')[4];
     const fix_title = `PERF: Fix ${issue_title}`;
@@ -114,7 +146,7 @@ async function create_pr(access_token, repo_url, buggy_file_path, issue_title, i
     });
 
     var change = {}
-    change[buggy_file_path] = file + '\n';
+    change[buggy_file_path] = fixed_file;
     octokit.createPullRequest({
         owner: user,
         repo: repo,
