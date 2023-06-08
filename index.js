@@ -24,7 +24,8 @@ async function run() {
             const session_id = pr_body.split('Session ID: ')[1].split('.')[0];
 
             const query = comment.split('/devbot ')[1];
-            get_response(auth_token, session_id, query);
+            const response = get_response(auth_token, session_id, query);
+            post_comment(repo_token, repo_url, pr_number, response);
         } else {
             const issue_title = core.getInput('issue-title');
             const issue_body = core.getInput('issue-body');
@@ -46,6 +47,18 @@ async function run() {
     }
 }
 
+async function post_comment(access_token, repo_url, pr_number, comment)
+{
+    const octokit = github.getOctokit(access_token);
+    const [owner, repo] = repo_url.split('/').slice(-2);
+    await octokit.issues.createComment({
+        owner: owner,
+        repo: repo,
+        issue_number: pr_number,
+        body: comment
+    });
+}
+
 async function get_response(auth_token, session_id, query)
 {
     var url = 'https://data-ai-dev.microsoft.com/deeppromptdev/api/v1/query';
@@ -63,8 +76,10 @@ async function get_response(auth_token, session_id, query)
         })
     });
     let data = await response.json();
+    let response_text = data['response_text'];
     console.log("---------------");
     console.log(data);
+    return response_text;
 }
 
 async function fix_bug(auth_token, session_id, buggy_code, start_line_number, buggy_function_call)
