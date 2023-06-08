@@ -11,18 +11,20 @@ async function run() {
         const repo_token = core.getInput('repo-token');
         const pat_token = core.getInput('token');
         const comment = core.getInput('comment', { required: false });
+
+        var auth = await get_deepprompt_auth(pat_token);
+        var auth_token = auth['access_token'];
+        var session_id = auth['session_id'];
+
         if (comment) {
             const pr_body = core.getInput('pr-body');
             const pr_number = core.getInput('pr-number');
             const repo = core.getInput('repo');
-            console.log(pr_body);
-            console.log('----');
-            console.log(pr_number);
-            console.log('----');
-            console.log(repo);
-            console.log('----');
-            console.log(comment);
-            console.log('----');
+            const repo_url = `https://github.com/${repo}`;
+            const session_id = pr_body.split('Session ID: ')[1].split('.')[0];
+
+            const query = comment.split('/devbot ')[1];
+            get_response(auth_token, session_id, query);
         } else {
             const issue_title = core.getInput('issue-title');
             const issue_body = core.getInput('issue-body');
@@ -33,9 +35,6 @@ async function run() {
             const repo_url = issue_metadata['repo_url'];
             var file = await get_file(repo_token, repo_url, buggy_file_path);
 
-            var auth = await get_deepprompt_auth(pat_token);
-            var auth_token = auth['access_token'];
-            var session_id = auth['session_id'];
             var fixed_file = await fix_bug(auth_token, session_id, file, issue_metadata['start_line_number'], issue_metadata['bottleneck_call']);
             
             console.log(fixed_file);
@@ -45,6 +44,27 @@ async function run() {
     } catch (error) {
         core.setFailed(error.message);
     }
+}
+
+async function get_response(auth_token, session_id, query)
+{
+    var url = 'https://data-ai-dev.microsoft.com/deeppromptdev/api/v1/query';
+    let response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'DeepPrompt-Version': 'v1',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${auth_token}`,
+            'DeepPrompt-Session-ID': session_id
+        },
+        body: JSON.stringify({
+            'query': query,
+        })
+    });
+    let data = await response.json();
+    console.log("---------------");
+    console.log(data);
 }
 
 async function fix_bug(auth_token, session_id, buggy_code, start_line_number, buggy_function_call)
