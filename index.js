@@ -12,10 +12,10 @@ async function run() {
         const pat_token = core.getInput('token');
         const comment = core.getInput('comment', { required: false });
         if (comment) {
-            const all_comments = core.getInput('all-comments');
+            const pr_body = core.getInput('pr-body');
             const pr_number = core.getInput('pr-number');
             const repo = core.getInput('repo');
-            console.log(all_comments);
+            console.log(pr_body);
             console.log('----');
             console.log(pr_number);
             console.log('----');
