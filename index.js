@@ -13,9 +13,7 @@ async function run() {
         const issue_number = core.getInput('issue-number');
         const repo_token = core.getInput('repo-token');
         const pat_token = core.getInput('token');
-        console.log(pat_token.substring(0, 5));
-        console.log(repo_token.substring(0, 5));
-        
+
         const issue_metadata = JSON.parse(issue_body);
         const buggy_file_path = issue_metadata['buggy_file_path'];
         const repo_url = issue_metadata['repo_url'];
@@ -37,7 +35,7 @@ async function fix_bug(access_token, buggy_code, start_line_number, buggy_functi
     var auth_token = auth['access_token'];
     var session_id = auth['session_id'];
 
-    var url = 'https://data-ai-dev.microsoft.com/deepprompt/api/v1/query';
+    var url = 'https://data-ai-dev.microsoft.com/deeppromptdev/api/v1/query';
     var intent = 'perf_fix';
     let response = await fetch(url, {
         method: 'POST',
@@ -64,7 +62,7 @@ async function fix_bug(access_token, buggy_code, start_line_number, buggy_functi
 
 async function get_deepprompt_auth(access_token) {
     try {
-        url = 'https://data-ai-dev.microsoft.com/deepprompt/api/v1/exchange'
+        url = 'https://data-ai-dev.microsoft.com/deeppromptdev/api/v1/exchange'
         let response = await fetch(url, {
             method: 'POST',
             headers: {
