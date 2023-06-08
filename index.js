@@ -49,13 +49,19 @@ async function run() {
 
 async function post_comment(access_token, repo_url, pr_number, comment)
 {
-    const octokit = github.getOctokit(access_token);
-    const [owner, repo] = repo_url.split('/').slice(-2);
-    await octokit.issues.createComment({
-        owner: owner,
-        repo: repo,
-        issue_number: pr_number,
-        body: comment
+    var owner = repo_url.split('/')[3];
+    var repo_name = repo_url.split('/')[4];
+    var url = `https://api.github.com/repos/${owner}/${repo_name}/issues/${pr_number}/comments`;
+    let response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json',
+            'Authorization': `token ${access_token}`
+        }, 
+        body: JSON.stringify({
+            'body': comment
+        })
     });
 }
 
