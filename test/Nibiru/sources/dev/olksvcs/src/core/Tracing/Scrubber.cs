@@ -14,16 +14,19 @@ namespace ScrubberNamespace
     public class Scrubber
     {
         public const string EmailRegExPattern = @"[a-zA-Z0-9!#$+\-^_~]+(?:\.[a-zA-Z0-9!#$+\-^_~]+)*@(?:[a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,6}";
-        public static string ScrubData(string data, char replacementChar)
-        {
-            Regex rx = new Regex(EmailRegExPattern);
-            foreach (Match match in rx.Matches(data))
-            {
-                string replacementString = new string(replacementChar, match.Value.Length);
-                data = data.Replace(match.Value, replacementString);
-            }
-
-            return data;
-        }
+	public static string ScrubData(string data, char replacementChar){
+	    Regex rx = new Regex(EmailRegExPattern);
+	    StringBuilder sb = new StringBuilder();
+	    int lastIndex = 0;
+	    foreach (Match match in rx.Matches(data))
+	    {
+		string replacementString = new string(replacementChar, match.Value.Length);
+		sb.Append(data.Substring(lastIndex, match.Index - lastIndex));
+		sb.Append(replacementString);
+		lastIndex = match.Index + match.Length;
+	    }
+	    sb.Append(data.Substring(lastIndex));
+	    return sb.ToString();
+	}
     }
 }
