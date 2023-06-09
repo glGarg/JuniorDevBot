@@ -5,6 +5,8 @@ on:
       - labeled
   issue_comment:
     types: [created]
+  pull_request_review:
+    types: [submitted]
 jobs:
   add-comment:
     if: github.event.label.name == 'perf'
