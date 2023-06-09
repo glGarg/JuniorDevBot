@@ -30,8 +30,14 @@ jobs:
           body: |
             This issue is available for anyone to work on. **Make sure to reference this issue in your pull request.** :sparkles: Thank you for your contribution! :sparkles:
   respond:
-    runs-on: ubuntu-latest
     if: github.event.issue.pull_request && contains(github.event.comment.body, '/devbot')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: write
+      pull-requests: write
+      actions: read
+      security-events: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
