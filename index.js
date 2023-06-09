@@ -18,17 +18,16 @@ async function run() {
 
         if (comment) {
             const pr_body = core.getInput('pr-body');
+            const comment_id = core.getInput('comment-id');
+            console.log(comment_id);
             const pr_number = core.getInput('pr-number');
             const repo = core.getInput('repo');
-            const author = core.getInput('author');
-            console.log(author);
             const repo_url = `https://github.com/${repo}`;
             const session_id = pr_body.split('Session ID: ')[1].split('.')[0];
 
             const query = comment.split('/devbot ')[1];
             const response = await get_response(auth_token, session_id, query);
             post_comment(repo_token, repo_url, pr_number, response);
-            console.log(author);
         } else {
             const issue_title = core.getInput('issue-title');
             const issue_body = core.getInput('issue-body');
