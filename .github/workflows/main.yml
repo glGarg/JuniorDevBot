@@ -71,7 +71,6 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           token: ${{ secrets.PAT_TOKEN }}
   respond-to-code-review:
-    if: github.event.
     runs-on: ubuntu-latest
     steps:
       - name: test
