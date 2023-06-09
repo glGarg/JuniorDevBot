@@ -80,20 +80,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Get comments
-        id: get-comments
-        uses: actions/github-script@v3
-        with:
-          script: |
-            const { data: comments } = await github.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number
-            });
-            console.log(comments);
-            return { comments };
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Respond To Comment
+      - name: Respond To Review
         uses: ./
         id: respond
         with:
