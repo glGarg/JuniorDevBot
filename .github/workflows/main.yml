@@ -84,8 +84,6 @@ jobs:
         id: respond1
         with:
           repo: ${{ github.event.repository.full_name }}
-          pr-number: ${{ github.event.issue.number }}
-          pr-body: ${{ github.event.issue.body }}
           comment: ${{ github.event.comment.body }}
           comment-id: ${{ github.event.comment.id }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
