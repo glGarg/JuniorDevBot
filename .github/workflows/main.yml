@@ -63,6 +63,14 @@ jobs:
           repo: ${{ github.event.repository.full_name }}
           pr-number: ${{ github.event.issue.number }}
           pr-body: ${{ github.event.issue.body }}
+          author: ${{ github.event.comment.user.login }}
           comment: ${{ github.event.comment.body }}
+          comment-id: ${{ github.event.comment.id }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           token: ${{ secrets.PAT_TOKEN }}
+  respond-to-code-review:
+    if: github.event.pull_request && contains(github.event.review.body, '/devbot')
+    runs-on: ubuntu-latest
+    steps:
+      - name: test
+        run: echo "Hello"
