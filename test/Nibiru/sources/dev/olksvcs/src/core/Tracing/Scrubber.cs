@@ -5,8 +5,6 @@
 // ---------------------------------------------------------------------------
 
 namespace ScrubberNamespace
-// Changes
-
 {
     using System;
     using System.Collections.Generic;
